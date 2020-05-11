@@ -102,3 +102,8 @@ class Node:
 if __name__ == '__main__':
     node = Node()
     node.listen_for_input()
+
+
+# [{"index": 0, "previous_hash": "", "timestamp": 0, "transactions": [], "proof": 100}]
+# []
+# []
