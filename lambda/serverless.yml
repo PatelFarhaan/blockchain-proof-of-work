@@ -1,0 +1,55 @@
+service: lambda
+
+package:
+    individually: true
+
+provider:
+  name: aws
+  timeout: 30
+  runtime: python3.7
+  stage: ${opt:stage}
+  region: us-west-1
+  stackName: angelfund-ai
+  deploymentBucket:
+    name: angelfund-ai-api-lambda-deployment-bucket
+
+custom:
+  pkgPyFuncs:
+    buildDir: _build
+    cleanup: true
+
+plugins:
+  - serverless-python-requirements
+functions:
+  company_images_failed_email:
+      name: company_images_failed_${opt:stage}
+      handler: lambda_function.lambda_handler
+      module: project_files/failed_company_images_email
+      events: 
+        - http:
+            path: v1/angelfund/failed_company_images_email
+            method: post
+      requirements: requirements.txt
+
+  company_images:
+    name: company_images_dump_${opt:stage}
+    handler: lambda_function.lambda_handler
+    module: project_files/company_images
+    events:
+      - http:
+          path: v1/angelfund/company_images
+          method: post
+    requirements: requirements.txt
+
+  redis_cluster:
+    name: redis_cluster_${opt:stage}
+    handler: lambda_function.lambda_handler
+    module: project_files/redis_cluster
+    events:
+      - http:
+          path: v1/angelfund/redis_cluster
+          method: post
+    vpc:
+      securityGroupIds: ["sg-5b47502a"]
+      subnetIds: ["subnet-c430de9e"]
+    requirements: requirements.txt

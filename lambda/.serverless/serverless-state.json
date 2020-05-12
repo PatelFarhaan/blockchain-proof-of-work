@@ -1,0 +1,730 @@
+{
+  "service": {
+    "service": "lambda",
+    "serviceObject": {
+      "name": "lambda"
+    },
+    "provider": {
+      "stage": "dev",
+      "variableSyntax": "\\${([ ~:a-zA-Z0-9._@'\",\\-\\/\\(\\)*?]+?)}",
+      "name": "aws",
+      "timeout": 30,
+      "runtime": "python3.7",
+      "region": "us-west-1",
+      "stackName": "angelfund-ai",
+      "deploymentBucket": "angelfund-ai-api-lambda-deployment-bucket",
+      "deploymentBucketObject": {
+        "name": "angelfund-ai-api-lambda-deployment-bucket"
+      },
+      "versionFunctions": true,
+      "remoteFunctionData": null,
+      "compiledCloudFormationTemplate": {
+        "AWSTemplateFormatVersion": "2010-09-09",
+        "Description": "The AWS CloudFormation template for this Serverless application",
+        "Resources": {
+          "CompanyUnderscoreimagesUnderscorefailedUnderscoreemailLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/company_images_failed_dev"
+            }
+          },
+          "CompanyUnderscoreimagesLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/company_images_dump_dev"
+            }
+          },
+          "RedisUnderscoreclusterLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/redis_cluster_dev"
+            }
+          },
+          "IamRoleLambdaExecution": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+              "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Principal": {
+                      "Service": [
+                        "lambda.amazonaws.com"
+                      ]
+                    },
+                    "Action": [
+                      "sts:AssumeRole"
+                    ]
+                  }
+                ]
+              },
+              "Policies": [
+                {
+                  "PolicyName": {
+                    "Fn::Join": [
+                      "-",
+                      [
+                        "angelfund-ai",
+                        "lambda"
+                      ]
+                    ]
+                  },
+                  "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                      {
+                        "Effect": "Allow",
+                        "Action": [
+                          "logs:CreateLogStream",
+                          "logs:CreateLogGroup"
+                        ],
+                        "Resource": [
+                          {
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/company_images_failed_dev:*"
+                          },
+                          {
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/company_images_dump_dev:*"
+                          },
+                          {
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/redis_cluster_dev:*"
+                          }
+                        ]
+                      },
+                      {
+                        "Effect": "Allow",
+                        "Action": [
+                          "logs:PutLogEvents"
+                        ],
+                        "Resource": [
+                          {
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/company_images_failed_dev:*:*"
+                          },
+                          {
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/company_images_dump_dev:*:*"
+                          },
+                          {
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/redis_cluster_dev:*:*"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ],
+              "Path": "/",
+              "RoleName": {
+                "Fn::Join": [
+                  "-",
+                  [
+                    "angelfund-ai",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    "lambdaRole"
+                  ]
+                ]
+              },
+              "ManagedPolicyArns": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+                    ]
+                  ]
+                }
+              ]
+            }
+          },
+          "CompanyUnderscoreimagesUnderscorefailedUnderscoreemailLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": "angelfund-ai-api-lambda-deployment-bucket",
+                "S3Key": "serverless/lambda/dev/1584477714814-2020-03-17T20:41:54.814Z/failed_company_images_email-company_images_failed_dev.zip"
+              },
+              "FunctionName": "company_images_failed_dev",
+              "Handler": "lambda_function.lambda_handler",
+              "MemorySize": 1024,
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleLambdaExecution",
+                  "Arn"
+                ]
+              },
+              "Runtime": "python3.7",
+              "Timeout": 30
+            },
+            "DependsOn": [
+              "CompanyUnderscoreimagesUnderscorefailedUnderscoreemailLogGroup",
+              "IamRoleLambdaExecution"
+            ]
+          },
+          "CompanyUnderscoreimagesUnderscorefailedUnderscoreemailLambdaVersionZqrrsJ1x204UkSSJeqebJorIqP8jfkgU33JQIbTHQ": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "CompanyUnderscoreimagesUnderscorefailedUnderscoreemailLambdaFunction"
+              },
+              "CodeSha256": "BG6DC2mTcE9FJax0je085HynNmtCXwUVWMw1KYS3UaY="
+            }
+          },
+          "CompanyUnderscoreimagesLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": "angelfund-ai-api-lambda-deployment-bucket",
+                "S3Key": "serverless/lambda/dev/1584477714814-2020-03-17T20:41:54.814Z/company_images-company_images_dump_dev.zip"
+              },
+              "FunctionName": "company_images_dump_dev",
+              "Handler": "lambda_function.lambda_handler",
+              "MemorySize": 1024,
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleLambdaExecution",
+                  "Arn"
+                ]
+              },
+              "Runtime": "python3.7",
+              "Timeout": 30
+            },
+            "DependsOn": [
+              "CompanyUnderscoreimagesLogGroup",
+              "IamRoleLambdaExecution"
+            ]
+          },
+          "CompanyUnderscoreimagesLambdaVersionEiCCEaoHrj4AKGNeci0Xb0uQRMkdvfjm2LPl1vbvRk4": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "CompanyUnderscoreimagesLambdaFunction"
+              },
+              "CodeSha256": "cz6f4T6vEv7OV71a3rqyqBGTXQjOMJsydXNm6+mCq6Q="
+            }
+          },
+          "RedisUnderscoreclusterLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": "angelfund-ai-api-lambda-deployment-bucket",
+                "S3Key": "serverless/lambda/dev/1584477714814-2020-03-17T20:41:54.814Z/redis_cluster-redis_cluster_dev.zip"
+              },
+              "FunctionName": "redis_cluster_dev",
+              "Handler": "lambda_function.lambda_handler",
+              "MemorySize": 1024,
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleLambdaExecution",
+                  "Arn"
+                ]
+              },
+              "Runtime": "python3.7",
+              "Timeout": 30,
+              "VpcConfig": {
+                "SecurityGroupIds": [
+                  "sg-5b47502a"
+                ],
+                "SubnetIds": [
+                  "subnet-c430de9e"
+                ]
+              }
+            },
+            "DependsOn": [
+              "RedisUnderscoreclusterLogGroup",
+              "IamRoleLambdaExecution"
+            ]
+          },
+          "RedisUnderscoreclusterLambdaVersion9VNJqzV99aHUc2nrVwIOEDTatMB8HE94NFqrH63OVIE": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "RedisUnderscoreclusterLambdaFunction"
+              },
+              "CodeSha256": "6ukAVgXk5rvPng2ypFSroNoEbG5Hdsm0EBZ1ZhgN5A4="
+            }
+          },
+          "ApiGatewayRestApi": {
+            "Type": "AWS::ApiGateway::RestApi",
+            "Properties": {
+              "Name": "dev-lambda",
+              "EndpointConfiguration": {
+                "Types": [
+                  "EDGE"
+                ]
+              },
+              "Policy": ""
+            }
+          },
+          "ApiGatewayResourceV1": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+              "ParentId": {
+                "Fn::GetAtt": [
+                  "ApiGatewayRestApi",
+                  "RootResourceId"
+                ]
+              },
+              "PathPart": "v1",
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayResourceV1Angelfund": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+              "ParentId": {
+                "Ref": "ApiGatewayResourceV1"
+              },
+              "PathPart": "angelfund",
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayResourceV1AngelfundFailedcompanyimagesemail": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+              "ParentId": {
+                "Ref": "ApiGatewayResourceV1Angelfund"
+              },
+              "PathPart": "failed_company_images_email",
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayResourceV1AngelfundCompanyimages": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+              "ParentId": {
+                "Ref": "ApiGatewayResourceV1Angelfund"
+              },
+              "PathPart": "company_images",
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayResourceV1AngelfundRediscluster": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+              "ParentId": {
+                "Ref": "ApiGatewayResourceV1Angelfund"
+              },
+              "PathPart": "redis_cluster",
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayMethodV1AngelfundFailedcompanyimagesemailPost": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "HttpMethod": "POST",
+              "RequestParameters": {},
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceV1AngelfundFailedcompanyimagesemail"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "ApiKeyRequired": false,
+              "AuthorizationType": "NONE",
+              "Integration": {
+                "IntegrationHttpMethod": "POST",
+                "Type": "AWS_PROXY",
+                "Uri": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":apigateway:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":lambda:path/2015-03-31/functions/",
+                      {
+                        "Fn::GetAtt": [
+                          "CompanyUnderscoreimagesUnderscorefailedUnderscoreemailLambdaFunction",
+                          "Arn"
+                        ]
+                      },
+                      "/invocations"
+                    ]
+                  ]
+                }
+              },
+              "MethodResponses": []
+            }
+          },
+          "ApiGatewayMethodV1AngelfundCompanyimagesPost": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "HttpMethod": "POST",
+              "RequestParameters": {},
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceV1AngelfundCompanyimages"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "ApiKeyRequired": false,
+              "AuthorizationType": "NONE",
+              "Integration": {
+                "IntegrationHttpMethod": "POST",
+                "Type": "AWS_PROXY",
+                "Uri": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":apigateway:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":lambda:path/2015-03-31/functions/",
+                      {
+                        "Fn::GetAtt": [
+                          "CompanyUnderscoreimagesLambdaFunction",
+                          "Arn"
+                        ]
+                      },
+                      "/invocations"
+                    ]
+                  ]
+                }
+              },
+              "MethodResponses": []
+            }
+          },
+          "ApiGatewayMethodV1AngelfundRedisclusterPost": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "HttpMethod": "POST",
+              "RequestParameters": {},
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceV1AngelfundRediscluster"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "ApiKeyRequired": false,
+              "AuthorizationType": "NONE",
+              "Integration": {
+                "IntegrationHttpMethod": "POST",
+                "Type": "AWS_PROXY",
+                "Uri": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":apigateway:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":lambda:path/2015-03-31/functions/",
+                      {
+                        "Fn::GetAtt": [
+                          "RedisUnderscoreclusterLambdaFunction",
+                          "Arn"
+                        ]
+                      },
+                      "/invocations"
+                    ]
+                  ]
+                }
+              },
+              "MethodResponses": []
+            }
+          },
+          "ApiGatewayDeployment1584477696275": {
+            "Type": "AWS::ApiGateway::Deployment",
+            "Properties": {
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "StageName": "dev"
+            },
+            "DependsOn": [
+              "ApiGatewayMethodV1AngelfundFailedcompanyimagesemailPost",
+              "ApiGatewayMethodV1AngelfundCompanyimagesPost",
+              "ApiGatewayMethodV1AngelfundRedisclusterPost"
+            ]
+          },
+          "CompanyUnderscoreimagesUnderscorefailedUnderscoreemailLambdaPermissionApiGateway": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "CompanyUnderscoreimagesUnderscorefailedUnderscoreemailLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "ApiGatewayRestApi"
+                    },
+                    "/*/*"
+                  ]
+                ]
+              }
+            }
+          },
+          "CompanyUnderscoreimagesLambdaPermissionApiGateway": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "CompanyUnderscoreimagesLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "ApiGatewayRestApi"
+                    },
+                    "/*/*"
+                  ]
+                ]
+              }
+            }
+          },
+          "RedisUnderscoreclusterLambdaPermissionApiGateway": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "RedisUnderscoreclusterLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "ApiGatewayRestApi"
+                    },
+                    "/*/*"
+                  ]
+                ]
+              }
+            }
+          }
+        },
+        "Outputs": {
+          "ServerlessDeploymentBucketName": {
+            "Value": "angelfund-ai-api-lambda-deployment-bucket"
+          },
+          "CompanyUnderscoreimagesUnderscorefailedUnderscoreemailLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "CompanyUnderscoreimagesUnderscorefailedUnderscoreemailLambdaVersionZqrrsJ1x204UkSSJeqebJorIqP8jfkgU33JQIbTHQ"
+            }
+          },
+          "CompanyUnderscoreimagesLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "CompanyUnderscoreimagesLambdaVersionEiCCEaoHrj4AKGNeci0Xb0uQRMkdvfjm2LPl1vbvRk4"
+            }
+          },
+          "RedisUnderscoreclusterLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "RedisUnderscoreclusterLambdaVersion9VNJqzV99aHUc2nrVwIOEDTatMB8HE94NFqrH63OVIE"
+            }
+          },
+          "ServiceEndpoint": {
+            "Description": "URL of the service endpoint",
+            "Value": {
+              "Fn::Join": [
+                "",
+                [
+                  "https://",
+                  {
+                    "Ref": "ApiGatewayRestApi"
+                  },
+                  ".execute-api.",
+                  {
+                    "Ref": "AWS::Region"
+                  },
+                  ".",
+                  {
+                    "Ref": "AWS::URLSuffix"
+                  },
+                  "/dev"
+                ]
+              ]
+            }
+          }
+        }
+      },
+      "vpc": {}
+    },
+    "custom": {
+      "pkgPyFuncs": {
+        "buildDir": "_build",
+        "cleanup": true
+      }
+    },
+    "plugins": [
+      "serverless-python-requirements"
+    ],
+    "pluginsData": {},
+    "functions": {
+      "company_images_failed_email": {
+        "name": "company_images_failed_dev",
+        "handler": "lambda_function.lambda_handler",
+        "module": "project_files/failed_company_images_email",
+        "events": [
+          {
+            "http": {
+              "path": "v1/angelfund/failed_company_images_email",
+              "method": "post",
+              "integration": "AWS_PROXY"
+            }
+          }
+        ],
+        "requirements": "requirements.txt",
+        "package": {
+          "artifact": ".serverless/project_files/failed_company_images_email-company_images_failed_dev.zip"
+        },
+        "memory": 1024,
+        "timeout": 30,
+        "runtime": "python3.7",
+        "vpc": {},
+        "versionLogicalId": "CompanyUnderscoreimagesUnderscorefailedUnderscoreemailLambdaVersionZqrrsJ1x204UkSSJeqebJorIqP8jfkgU33JQIbTHQ"
+      },
+      "company_images": {
+        "name": "company_images_dump_dev",
+        "handler": "lambda_function.lambda_handler",
+        "module": "project_files/company_images",
+        "events": [
+          {
+            "http": {
+              "path": "v1/angelfund/company_images",
+              "method": "post",
+              "integration": "AWS_PROXY"
+            }
+          }
+        ],
+        "requirements": "requirements.txt",
+        "package": {
+          "artifact": ".serverless/project_files/company_images-company_images_dump_dev.zip"
+        },
+        "memory": 1024,
+        "timeout": 30,
+        "runtime": "python3.7",
+        "vpc": {},
+        "versionLogicalId": "CompanyUnderscoreimagesLambdaVersionEiCCEaoHrj4AKGNeci0Xb0uQRMkdvfjm2LPl1vbvRk4"
+      },
+      "redis_cluster": {
+        "name": "redis_cluster_dev",
+        "handler": "lambda_function.lambda_handler",
+        "module": "project_files/redis_cluster",
+        "events": [
+          {
+            "http": {
+              "path": "v1/angelfund/redis_cluster",
+              "method": "post",
+              "integration": "AWS_PROXY"
+            }
+          }
+        ],
+        "vpc": {
+          "securityGroupIds": {
+            "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"RedisUnderscoreclusterLambdaFunction\"][\"Properties\"][\"VpcConfig\"][\"SecurityGroupIds\"]"
+          },
+          "subnetIds": {
+            "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"RedisUnderscoreclusterLambdaFunction\"][\"Properties\"][\"VpcConfig\"][\"SubnetIds\"]"
+          }
+        },
+        "requirements": "requirements.txt",
+        "package": {
+          "artifact": ".serverless/project_files/redis_cluster-redis_cluster_dev.zip"
+        },
+        "memory": 1024,
+        "timeout": 30,
+        "runtime": "python3.7",
+        "versionLogicalId": "RedisUnderscoreclusterLambdaVersion9VNJqzV99aHUc2nrVwIOEDTatMB8HE94NFqrH63OVIE"
+      }
+    },
+    "serviceFilename": "serverless.yml",
+    "layers": {},
+    "isDashboardMonitoringPreconfigured": false
+  },
+  "package": {
+    "individually": true,
+    "artifactDirectoryName": "serverless/lambda/dev/1584477714814-2020-03-17T20:41:54.814Z",
+    "artifact": ""
+  }
+}
