@@ -13,5 +13,5 @@ PyYAML==5.3.1
 requests==2.23.0
 shellescape==3.8.1
 six==1.14.0
-urllib3==1.25.8
+urllib3==1.26.19
 Werkzeug==3.0.3
